@@ -15,7 +15,7 @@ export class AppComponent {
   
   public paginas_menu = [
     { title: 'Início', url: '/home', icon: 'home-outline' },
-    { title: 'Cadastrar veículo', url: '/cadastrar-veiculo', icon: 'add' },
+    { title: 'Cadastrar imovel', url: '/cadastrar-imovel', icon: 'add' },
   ];
   
   constructor(

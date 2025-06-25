@@ -4,23 +4,23 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule, LoadingController, MenuController, NavController, ToastController } from '@ionic/angular';
 import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
-import { Veiculo } from '../home/veiculo.model';
+import { Imovel } from '../home/imovel.model';
 import { Storage } from '@ionic/storage';
 import { StorageService } from '../nucleo/services/storage-service';
 import { Usuario } from '../nucleo/models/usuario.model';
 
 @Component({
-  selector: 'app-cadastrar-veiculo',
-  templateUrl: './cadastrar-veiculo.page.html',
-  styleUrls: ['./cadastrar-veiculo.page.scss'],
+  selector: 'app-cadastrar-imovel',
+  templateUrl: './cadastrar-imovel.page.html',
+  styleUrls: ['./cadastrar-imovel.page.scss'],
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule, HttpClientModule],
   providers: [HttpClient, Storage, StorageService]
 })
-export class CadastrarVeiculoPage implements OnInit {
+export class CadastrarImovelPage implements OnInit {
 
   public usuario: Usuario = new Usuario();
-  public instancia: Veiculo = new Veiculo();
+  public instancia: Imovel = new Imovel();
 
   constructor(
     public http: HttpClient,
@@ -39,13 +39,14 @@ export class CadastrarVeiculoPage implements OnInit {
     const registro = await this.controle_armazenamento.get('usuario');
     if(registro) {
       this.usuario = Object.assign(new Usuario(), registro);
+      console.log(this.usuario.token)
     }
     else{
       this.controle_navegacao.navigateRoot('/login');
     }
   }
 
-  async enviarVeiculo() {
+  async enviarImovel() {
    
     // Inicializa interface com efeito de carregamento
     const loading = await this.controle_carregamento.create({message: 'Enviando...', duration: 15000});
@@ -59,10 +60,11 @@ export class CadastrarVeiculoPage implements OnInit {
 
     // Envia instância para a API do sistema web
     this.http.post(
-      'http://127.0.0.1:8000/veiculo/api/',
+      'http://127.0.0.1:8000/imovel/api/cadastro',
       this.instancia,
       {
-        headers: http_headers
+        headers: http_headers,
+        withCredentials: true
       }
     ).subscribe({
       next: async (resposta: any) => {
@@ -73,7 +75,7 @@ export class CadastrarVeiculoPage implements OnInit {
       },
       error: async (erro: any) => {
         loading.dismiss();
-        this.apresentaMensagem(`Falha ao cadastrar veículo: ${erro.message}`);
+        this.apresentaMensagem(`Falha ao cadastrar imovel: ${erro.message}`);
       }
     });
   }
@@ -82,7 +84,8 @@ export class CadastrarVeiculoPage implements OnInit {
     Camera.getPhoto({
       resultType: CameraResultType.DataUrl,
       source: CameraSource.Camera,
-      quality: 100
+      quality: 100,
+      
     }).then((imagem: Photo) => {
       this.instancia.foto = imagem.dataUrl;
     }).catch((erro: any) => {
@@ -99,10 +102,10 @@ export class CadastrarVeiculoPage implements OnInit {
   }
 
   public isFormularioValido(): boolean {
-    return this.instancia.marca != 0 &&
-           this.instancia.modelo != '' &&
-           this.instancia.ano != 0 &&
-           this.instancia.cor != 0 &&
-           this.instancia.combustivel != 0;
+    return this.instancia.tipo != 0 &&
+           this.instancia.detalhes != '' &&
+           this.instancia.tamanho != 0 &&
+           this.instancia.finalidade != 0 &&
+           this.instancia.quartos != 0;
   }
 }

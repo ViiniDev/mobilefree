@@ -4,7 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { IonicModule, LoadingController, MenuController, NavController, ToastController } from '@ionic/angular';
 
-import { Veiculo } from './veiculo.model';
+import { Imovel } from './imovel.model';
 import { Usuario } from '../nucleo/models/usuario.model';
 import { StorageService } from '../nucleo/services/storage-service';
 
@@ -19,7 +19,7 @@ import { StorageService } from '../nucleo/services/storage-service';
 export class HomePage implements OnInit {
 
   public usuario: Usuario = new Usuario();
-  public lista_veiculos: Veiculo[] = [];
+  public lista_imovel: Imovel[] = [];
 
   constructor(
     public http: HttpClient,
@@ -38,14 +38,14 @@ export class HomePage implements OnInit {
     const registro = await this.controle_armazenamento.get('usuario');
     if(registro) {
       this.usuario = Object.assign(new Usuario(), registro);
-      this.consultarVeiculosSistemaWeb();
+      this.consultarImovelSistemaWeb();
     }
     else{
       this.controle_navegacao.navigateRoot('/login');
     }
   }
 
-  async consultarVeiculosSistemaWeb() {
+  async consultarImovelSistemaWeb() {
 
     // Inicializa interface com efeito de carregamento
     const loading = await this.controle_carregamento.create({message: 'Autenticando...', duration: 15000});
@@ -53,19 +53,22 @@ export class HomePage implements OnInit {
 
     let http_headers: HttpHeaders = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization':`Token ${this.usuario.token}`
+      'Authorization':`Token ${this.usuario.token}`,
+      
     });
 
-    // Requisita lista de veículos para a API do sistema web
+    // Requisita lista de imovel para a API do sistema web
     this.http.get(
-      'http://127.0.0.1:8000/veiculo/api/',
+      'http://127.0.0.1:8000/imovel/api/',
+      
       {
-        headers: http_headers
+        headers: http_headers,
+        withCredentials: true
       }
     ).subscribe({
       next: async (resposta: any) => {
 
-        this.lista_veiculos = resposta;
+        this.lista_imovel = resposta;
         
         // Finaliza interface com efeito de carregamento
         loading.dismiss();
@@ -73,7 +76,7 @@ export class HomePage implements OnInit {
       error: async (erro: any) => {
         loading.dismiss();
         const mensagem = await this.controle_toast.create({
-          message: `Falha ao consultar veículos: ${erro.message}`,
+          message: `Falha ao consultar imovel: ${erro.message}`,
           cssClass: 'ion-text-center',
           duration: 2000
         });
@@ -82,7 +85,7 @@ export class HomePage implements OnInit {
     });
   }
 
-  async excluirVeiculo(id: number) {
+  async excluirImovel(id: number) {
 
     // Inicializa interface com efeito de carregamento
     const loading = await this.controle_carregamento.create({message: 'Autenticando...', duration: 15000});
@@ -93,16 +96,17 @@ export class HomePage implements OnInit {
       'Authorization':`Token ${this.usuario.token}`
     });
 
-    // Deleta instância de veículo via API do sistema web
+    // Deleta instância de imovel via API do sistema web
     this.http.delete(
-      `http://127.0.0.1:8000/veiculo/api/${id}/`,
+       `http://127.0.0.1:8000/imovel/api/deletar/${id}/`,
       {
-        headers: http_headers
+        headers: http_headers,
+        withCredentials: true
       }
     ).subscribe({
       next: async (resposta: any) => {
 
-        this.consultarVeiculosSistemaWeb();
+        this.consultarImovelSistemaWeb();
 
         // Finaliza interface com efeito de carregamento
         loading.dismiss();
@@ -110,7 +114,7 @@ export class HomePage implements OnInit {
       error: async (erro: any) => {
         loading.dismiss();
         const mensagem = await this.controle_toast.create({
-          message: `Falha ao excluir o veículo: ${erro.message}`,
+          message: `Falha ao excluir o imovel: ${erro.message}`,
           cssClass: 'ion-text-center',
           duration: 2000
         });

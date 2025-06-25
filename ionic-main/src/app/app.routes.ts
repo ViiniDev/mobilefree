@@ -15,7 +15,7 @@ export const routes: Routes = [
     loadComponent: () => import('./login/login.page').then( m => m.LoginPage)
   },
   {
-    path: 'cadastrar-veiculo',
-    loadComponent: () => import('./cadastrar-veiculo/cadastrar-veiculo.page').then( m => m.CadastrarVeiculoPage)
+    path: 'cadastrar-imovel',
+    loadComponent: () => import('./cadastrar-imovel/cadastrar-imovel.page').then( m => m.CadastrarImovelPage)
   },
 ];

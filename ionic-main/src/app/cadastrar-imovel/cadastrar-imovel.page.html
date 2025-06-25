@@ -1,0 +1,67 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+   </ion-buttons>
+    <ion-title>Cadastrar imovel</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  
+
+
+  <ion-list>
+    <ion-item>
+      <ion-select label="Tipo" placeholder="[Selecione]" [(ngModel)]="instancia.tipo">
+        <ion-select-option [value]="1">CASA</ion-select-option>
+        <ion-select-option [value]="2">APARTAMENTO</ion-select-option>
+        <ion-select-option [value]="3">KITNET/STUDIO</ion-select-option>
+        <ion-select-option [value]="4">COBERTURA</ion-select-option>
+        <ion-select-option [value]="5">SOBRADO</ion-select-option>
+        <ion-select-option [value]="6">DUPLEX/TRIPLEX</ion-select-option>
+        <ion-select-option [value]="7">CASA CONDOMINIO</ion-select-option>
+        <ion-select-option [value]="8">APARTAMENTO GARDEN</ion-select-option>
+        <ion-select-option [value]="9">COMERCIAL</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-input type="text" label="Detalhes" [(ngModel)]="instancia.detalhes" ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input type="number" label="Tamanho" [(ngModel)]="instancia.tamanho" min="1900"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-select label="Finalidade" placeholder="[Selecione]" [(ngModel)]="instancia.finalidade">
+        <ion-select-option [value]="1">VENDA</ion-select-option>
+        <ion-select-option [value]="2">ALUGUEL</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-select label="Quartos" placeholder="[Selecione]" [(ngModel)]="instancia.quartos">
+        <ion-select-option [value]="1">1</ion-select-option>
+        <ion-select-option [value]="2">2</ion-select-option>
+        <ion-select-option [value]="3">3</ion-select-option>
+        <ion-select-option [value]="4">4+</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-thumbnail slot="start">
+        <ion-img *ngIf="!instancia.foto" src="../../assets/imgs/thumbnail.svg" (click)="adicionarFoto()"></ion-img>
+        <ion-img *ngIf="instancia.foto" [src]="instancia.foto" (click)="adicionarFoto()"></ion-img>
+      </ion-thumbnail>
+      <ion-label>Foto</ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="success" (click)="enviarImovel()" [disabled]="!isFormularioValido()">
+      <ion-icon name="cloud-upload-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

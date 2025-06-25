@@ -18,9 +18,9 @@ import { StorageService } from '../nucleo/services/storage-service';
 })
 export class LoginPage implements OnInit {
 
-  public instancia: { username: string, password: string} = {
-    username: 'izabela',
-    password: 'izasenha'
+  public instancia: { usuario: string, senha: string } = {
+    usuario: 'vinicius',
+    senha: '123'
   };
 
   constructor(
@@ -31,7 +31,7 @@ export class LoginPage implements OnInit {
     public controle_menu: MenuController,
     public controle_armazenamento: StorageService,
     public http: HttpClient
-  ) { 
+  ) {
     this.controle_menu.enable(false);
   }
 
@@ -40,7 +40,7 @@ export class LoginPage implements OnInit {
   async autenticarUsuario() {
 
     // Inicializa interface com efeito de carregamento
-    const loading = await this.controle_carregamento.create({message: 'Autenticando...', duration: 15000});
+    const loading = await this.controle_carregamento.create({ message: 'Autenticando...', duration: 15000 });
     await loading.present();
 
     // Define informações do cabeçalho da requisição
@@ -52,30 +52,40 @@ export class LoginPage implements OnInit {
     this.http.post(
       'http://localhost:8000/autenticacao-api/',
       this.instancia,
-      {
-        headers: http_headers
-      }
+      { headers: http_headers,
+        
+       }
     ).subscribe({
       next: async (resposta: any) => {
+        if (resposta.success) {
+          // Login bem-sucedido
+          let usuario = Object.assign(new Usuario(), resposta);
+          this.controle_armazenamento.set('usuario', usuario);
 
-        // Armazena localmente as credenciais de usuário
-        let usuario = Object.assign(new Usuario(), resposta);
-        this.controle_armazenamento.set('usuario', usuario);
-
-        // // Finaliza autenticação e redireciona para interface inicial
-        loading.dismiss();
-        this.controle_navegacao.navigateRoot('/home');
+          loading.dismiss();
+          this.controle_navegacao.navigateRoot('/home');
+        } else {
+          // Login falhou (backend retornou JSON com success = false)
+          loading.dismiss();
+          const mensagem = await this.controle_toast.create({
+            message: resposta.error || 'Falha na autenticação.',
+            cssClass: 'ion-text-center',
+            duration: 2000
+          });
+          mensagem.present();
+        }
       },
       error: async (erro: any) => {
         loading.dismiss();
         const mensagem = await this.controle_toast.create({
-          message: `Falha ao autenticar usuário: ${erro.message}`,
+          message: erro.error?.error || 'Erro de conexão com o servidor.',
           cssClass: 'ion-text-center',
           duration: 2000
         });
         mensagem.present();
       }
     });
+
   }
 
   async fecharAplicativo() {
