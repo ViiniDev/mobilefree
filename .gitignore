@@ -2,3 +2,6 @@ ionic-main/node_modules/
 ionic-main/android/.gradle/
 ionic-main/www/
 ionic-main/platforms/
+ionic-main/.angular/
+ionic-main/node_modules/
+ionic-main/android/.gradle/
